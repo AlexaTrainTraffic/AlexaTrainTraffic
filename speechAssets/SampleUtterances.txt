@@ -1,0 +1,15 @@
+GetFirstEventIntent get info for the {train} train
+GetFirstEventIntent when is the next {train} train
+GetFirstEventIntent where is the {train} train
+GetFirstEventIntent where is the {train}
+GetFirstEventIntent {train}
+
+GetNextEventIntent yes
+GetNextEventIntent yup
+GetNextEventIntent sure
+GetNextEventIntent yes please
+
+AMAZON.StopIntent no
+AMAZON.StopIntent nope
+AMAZON.StopIntent no thanks
+AMAZON.StopIntent no thank you
