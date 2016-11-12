@@ -41,7 +41,6 @@ var APP_ID = undefined; //replace with 'amzn1.echo-sdk-ams.app.[your-unique-valu
 
 var https = require('https');
 
-
 /**
  * The AlexaSkill Module that has the AlexaSkill prototype and helper functions
  */
