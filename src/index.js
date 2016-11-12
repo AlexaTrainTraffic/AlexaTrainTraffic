@@ -504,6 +504,25 @@ function handleNextEventRequest(intent, session, response) {
     response.askWithCard(speechOutput, repromptOutput, cardTitle, cardContent);
 }
 
+function getJsonEventsFromMTA(eventCallback) {
+    var url = urlPrefix;
+    var request = new XMLHttpRequest();
+    https.get(url, function(res) {
+        var body = '';
+
+        res.on('data', function (chunk) {
+            body += chunk;
+        });
+
+        res.on('end', function () {
+            var stringResult = parseJson(body);
+            eventCallback(stringResult);
+        });
+    }).on('error', function (e) {
+        console.log("Got error: ", e);
+    });
+}
+
 
 // Create the handler that responds to the Alexa Request.
 exports.handler = function (event, context) {
