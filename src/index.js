@@ -8,43 +8,7 @@
     or in the "license" file accompanying this file. This file is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
 */
 
-/**
- * This sample shows how to create a Lambda function for handling Alexa Skill requests that:
- *
- * - Web service: communicate with an external web service to get events for specified days in history (Wikipedia API)
- * - Pagination: after obtaining a list of events, read a small subset of events and wait for user prompt to read the next subset of events by maintaining session state
- * - Dialog and Session state: Handles two models, both a one-shot ask and tell model, and a multi-turn dialog model.
- * - SSML: Using SSML tags to control how Alexa renders the text-to-speech.
- *
- * Examples:
- * One-shot model:
- * User:  "Alexa, ask History Buff what happened on August thirtieth."
- * Alexa: "For August thirtieth, in 2003, [...] . Wanna go deeper in history?"
- * User: "No."
- * Alexa: "Good bye!"
- *
- *
- * Dialog model:
- * User:  "Alexa, open train traffic"
- * Alexa: "What train would you like information on?"
- * User:  "The 5 train."
- * Alexa: "There is a service disruption.  Would you like to information on other trains?"
- * User: "No."
- * Alexa: "Good bye!"
- */
-
-
-/**
- * App ID for the skill
- */
-var APP_ID = undefined; //replace with 'amzn1.echo-sdk-ams.app.[your-unique-value-here]';
-
-var https = require('https');
-
-/**
- * The AlexaSkill Module that has the AlexaSkill prototype and helper functions
- */
-var AlexaSkill = 'use strict';
+'use strict';
 
 function AlexaSkill(appId) {
     this._appId = appId;
@@ -230,6 +194,55 @@ Response.prototype = (function () {
     };
 })();
 
+
+/**
+    Copyright 2014-2015 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+
+    Licensed under the Apache License, Version 2.0 (the "License"). You may not use this file except in compliance with the License. A copy of the License is located at
+
+        http://aws.amazon.com/apache2.0/
+
+    or in the "license" file accompanying this file. This file is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
+*/
+
+/**
+ * This sample shows how to create a Lambda function for handling Alexa Skill requests that:
+ *
+ * - Web service: communicate with an external web service to get events for specified days in history (Wikipedia API)
+ * - Pagination: after obtaining a list of events, read a small subset of events and wait for user prompt to read the next subset of events by maintaining session state
+ * - Dialog and Session state: Handles two models, both a one-shot ask and tell model, and a multi-turn dialog model.
+ * - SSML: Using SSML tags to control how Alexa renders the text-to-speech.
+ *
+ * Examples:
+ * One-shot model:
+ * User:  "Alexa, ask History Buff what happened on August thirtieth."
+ * Alexa: "For August thirtieth, in 2003, [...] . Wanna go deeper in history?"
+ * User: "No."
+ * Alexa: "Good bye!"
+ *
+ *
+ * Dialog model:
+ * User:  "Alexa, open train traffic"
+ * Alexa: "What train would you like information on?"
+ * User:  "The 5 train."
+ * Alexa: "There is a service disruption.  Would you like to information on other trains?"
+ * User: "No."
+ * Alexa: "Good bye!"
+ */
+
+
+/**
+ * App ID for the skill
+ */
+var APP_ID = undefined; //replace with 'amzn1.echo-sdk-ams.app.[your-unique-value-here]';
+
+var https = require('https');
+
+/**
+ * The AlexaSkill Module that has the AlexaSkill prototype and helper functions
+ */
+
+
 /**
  * URL prefix to download history content from Wikipedia
  */
@@ -349,7 +362,8 @@ function getWelcomeResponse(response) {
  * Gets a poster prepares the speech to reply to the user.
  */
 function handleFirstEventRequest(intent, session, response) {
-    var lineColorSlot = intent.slots.train;
+    // var lineColorSlot = intent.slots.train;
+    var lineColorSlot = 'yellow'
     var repromptText = "With Train Traffic, you can check the status of your trainline.  " +
             "For example, you could say how is service on the yellow line?. Now, which trainline color do you want?";
     /*var monthNames = ["January", "February", "March", "April", "May", "June",
@@ -373,93 +387,104 @@ function handleFirstEventRequest(intent, session, response) {
 
     var cardTitle = "Status of the" + lineColorSlot + "line.";
 
-
-    getJsonEventsFromMTA(function (results) {
-        var speechText = ""
-        if (!results) {
-            speechText = "There is a problem connecting to the MTA at this time. Please try again later.";
-            cardContent = speechText;
-            response.tell(speechText);
-        } else {
-            switch (lineColorSlot) {
-                case 'yellow':
-                  sessionAttributes.text = results[8].status;
-                  session.attributes = sessionAttributes;
-                  cardContent = cardContent + results[8].status + " ";
-                  speechText = "<p>" + speechText + results[8].status + "</p> ";
-                  break;
-                case 'blue':
-                  sessionAttributes.text = results[3].status;
-                  session.attributes = sessionAttributes;
-                  cardContent = cardContent + results[3].status + " ";
-                  speechText = "<p>" + speechText + results[3].status + "</p> ";
-
-                    break;
-                case 'red':
-                  sessionAttributes.text = results[0].status;
-                  session.attributes = sessionAttributes;
-                  cardContent = cardContent + results[0].status + " ";
-                  speechText = "<p>" + speechText + results[0].status + "</p> ";
-
-                    break;
-                case 'green':
-                  sessionAttributes.text = results[1].status;
-                  session.attributes = sessionAttributes;
-                  cardContent = cardContent + results[1].status + " ";
-                  speechText = "<p>" + speechText + results[1].status + "</p> ";
-
-                    break;
-                case 'lightgreen':
-                  sessionAttributes.text = results[5].status;
-                  session.attributes = sessionAttributes;
-                  cardContent = cardContent + results[5].status + " ";
-                  speechText = "<p>" + speechText + results[5].status + "</p> ";
-
-                    break;
-                case 'grey':
-                  sessionAttributes.text = results[7].status;
-                  session.attributes = sessionAttributes;
-                  cardContent = cardContent + results[7].status + " ";
-                  speechText = "<p>" + speechText + results[7].status + "</p> ";
-
-                    break;
-                case 'orange':
-                  sessionAttributes.text = results[4].status;
-                  session.attributes = sessionAttributes;
-                  cardContent = cardContent + results[4].status + " ";
-                  speechText = "<p>" + speechText + results[4].status + "</p> ";
-
-                    break;
-                case 'purple':
-                  sessionAttributes.text = results[2].status;
-                  session.attributes = sessionAttributes;
-                  cardContent = cardContent + results[2].status + " ";
-                  speechText = "<p>" + speechText + results[2].status + "</p> ";
-
-                    break;
-                case 'brown':
-                  sessionAttributes.text = results[6].status;
-                  session.attributes = sessionAttributes;
-                  cardContent = cardContent + results[6].status + " ";
-                  speechText = "<p>" + speechText + results[6].status + "</p> ";
-                    break;
-                  default:
-                    console.log('stuff')
-            }
-            speechText = speechText + "<p>Wanna go deeper in history?</p>";
-            var speechOutput = {
-                speech: "<speak>" + prefixContent + speechText + "</speak>",
-                type: AlexaSkill.speechOutputType.SSML
-            };
-            var repromptOutput = {
-                speech: repromptText,
-                type: AlexaSkill.speechOutputType.PLAIN_TEXT
-            };
-            response.askWithCard(speechOutput, repromptOutput, cardTitle, cardContent);
-
-        }
-    });
+    speechText = "<p>there is train traffic</p>" + "<p>Wanna go deeper in history?</p>";
+    var speechOutput = {
+        speech: "<speak>" + prefixContent + speechText + "</speak>",
+        type: AlexaSkill.speechOutputType.SSML
+    };
+    var repromptOutput = {
+        speech: repromptText,
+        type: AlexaSkill.speechOutputType.PLAIN_TEXT
+    };
+    response.askWithCard(speechOutput, repromptOutput, cardTitle, cardContent);
 }
+
+    // getJsonEventsFromMTA('yellow', function (results) {
+    //     var speechText = "", i
+    //     if (!results) {
+    //         speechText = "There is a problem connecting to the MTA at this time. Please try again later.";
+    //         cardContent = speechText;
+    //         response.tell(speechText);
+    //     } else {
+    //         switch (lineColorSlot) {
+    //             case 'yellow':
+    //               sessionAttributes.text = results[8].status;
+    //               session.attributes = sessionAttributes;
+    //               cardContent = cardContent + results[8].status + " ";
+    //               speechText = "<p>" + speechText + results[8].status + "</p> ";
+    //               break;
+    //             case 'blue':
+    //               sessionAttributes.text = results[3].status;
+    //               session.attributes = sessionAttributes;
+    //               cardContent = cardContent + results[3].status + " ";
+    //               speechText = "<p>" + speechText + results[3].status + "</p> ";
+
+    //                 break;
+    //             case 'red':
+    //               sessionAttributes.text = results[0].status;
+    //               session.attributes = sessionAttributes;
+    //               cardContent = cardContent + results[0].status + " ";
+    //               speechText = "<p>" + speechText + results[0].status + "</p> ";
+
+    //                 break;
+    //             case 'green':
+    //               sessionAttributes.text = results[1].status;
+    //               session.attributes = sessionAttributes;
+    //               cardContent = cardContent + results[1].status + " ";
+    //               speechText = "<p>" + speechText + results[1].status + "</p> ";
+
+    //                 break;
+    //             case 'lightgreen':
+    //               sessionAttributes.text = results[5].status;
+    //               session.attributes = sessionAttributes;
+    //               cardContent = cardContent + results[5].status + " ";
+    //               speechText = "<p>" + speechText + results[5].status + "</p> ";
+
+    //                 break;
+    //             case 'grey':
+    //               sessionAttributes.text = results[7].status;
+    //               session.attributes = sessionAttributes;
+    //               cardContent = cardContent + results[7].status + " ";
+    //               speechText = "<p>" + speechText + results[7].status + "</p> ";
+
+    //                 break;
+    //             case 'orange':
+    //               sessionAttributes.text = results[4].status;
+    //               session.attributes = sessionAttributes;
+    //               cardContent = cardContent + results[4].status + " ";
+    //               speechText = "<p>" + speechText + results[4].status + "</p> ";
+
+    //                 break;
+    //             case 'purple':
+    //               sessionAttributes.text = results[2].status;
+    //               session.attributes = sessionAttributes;
+    //               cardContent = cardContent + results[2].status + " ";
+    //               speechText = "<p>" + speechText + results[2].status + "</p> ";
+
+    //                 break;
+    //             case 'brown':
+    //               sessionAttributes.text = results[6].status;
+    //               session.attributes = sessionAttributes;
+    //               cardContent = cardContent + results[6].status + " ";
+    //               speechText = "<p>" + speechText + results[6].status + "</p> ";
+    //                 break;
+    //               default:
+    //                 console.log('stuff')
+    //         }
+    //         speechText = speechText + "<p>Wanna go deeper in history?</p>";
+    //         var speechOutput = {
+    //             speech: "<speak>" + prefixContent + speechText + "</speak>",
+    //             type: AlexaSkill.speechOutputType.SSML
+    //         };
+    //         var repromptOutput = {
+    //             speech: repromptText,
+    //             type: AlexaSkill.speechOutputType.PLAIN_TEXT
+    //         };
+    //         response.askWithCard(speechOutput, repromptOutput, cardTitle, cardContent);
+
+    //     }
+    // });
+// }
 
 /**
  * Gets a poster prepares the speech to reply to the user.
@@ -473,7 +498,7 @@ function handleNextEventRequest(intent, session, response) {
         repromptText = "Do you want to know more about what happened on this date?",
         i;
     if (!result) {
-        speechText = "With History Buff, you can get historical events for any day of the year. For example, you could say today, or August thirtieth. Now, which day do you want?";
+        speechText = "With Train Traffic, you can get historical events for any day of the year. For example, you could say today, or August thirtieth. Now, which day do you want?";
         cardContent = speechText;
     } else if (sessionAttributes.index >= result.length) {
         speechText = "There are no more events for this date. Try another date by saying <break time = \"0.3s\"/> get events for august thirtieth.";
@@ -503,8 +528,8 @@ function handleNextEventRequest(intent, session, response) {
     response.askWithCard(speechOutput, repromptOutput, cardTitle, cardContent);
 }
 
-function getJsonEventsFromMTA(eventCallback) {
-    var url = urlPrefix;
+function getJsonEventsFromMTA(line) {
+    var url = /*urlPrefix;*/'https://damp-garden-70395.herokuapp.com/'
     var request = new XMLHttpRequest();
     https.get(url, function(res) {
         var body = '';
