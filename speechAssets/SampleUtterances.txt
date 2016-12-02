@@ -1,7 +1,6 @@
 GetFirstEventIntent get info for the {train} train
-GetFirstEventIntent when is the next {train} train
-GetFirstEventIntent where is the {train} train
-GetFirstEventIntent where is the {train}
+GetFirstEventIntent how is the {train} train
+GetFirstEventIntent how is the {train}
 GetFirstEventIntent {train}
 
 GetNextEventIntent yes

@@ -362,32 +362,18 @@ function getWelcomeResponse(response) {
  * Gets a poster prepares the speech to reply to the user.
  */
 function handleFirstEventRequest(intent, session, response) {
-    // var lineColorSlot = intent.slots.train;
-    var lineColorSlot = 'yellow'
+    var lineColorSlot = intent.slots.train.value;
     var repromptText = "With Train Traffic, you can check the status of your trainline.  " +
             "For example, you could say how is service on the yellow line?. Now, which trainline color do you want?";
-    /*var monthNames = ["January", "February", "March", "April", "May", "June",
-                      "July", "August", "September", "October", "November", "December"
-    ];*/
     var sessionAttributes = {};
-    // Read the first 3 events, then set the count to 3
-    /*sessionAttributes.index = paginationSize;*/
-    /*var date = "";*/
 
-    // If the user provides a date, then use that, otherwise use today
-    // The date is in server time, not in the user's time zone. So "today" for the user may actually be tomorrow
-    /*if (lineColorSlot && lineColorSlot.value) {
-        date = new Date(lineColorSlot.value);
-    } else {
-        date = new Date();
-    }*/
 
     var prefixContent = "<p>For the " + lineColorSlot + "line, there is currently, </p>";
     var cardContent = "For the " + lineColorSlot + "line, there is currently, ";
 
     var cardTitle = "Status of the" + lineColorSlot + "line.";
 
-    speechText = "<p>there is train traffic</p>" + "<p>Wanna go deeper in history?</p>";
+    var speechText = "<p>train traffic ahead</p>" + "<p>Wanna go deeper in the subway?</p>";
     var speechOutput = {
         speech: "<speak>" + prefixContent + speechText + "</speak>",
         type: AlexaSkill.speechOutputType.SSML
@@ -396,95 +382,94 @@ function handleFirstEventRequest(intent, session, response) {
         speech: repromptText,
         type: AlexaSkill.speechOutputType.PLAIN_TEXT
     };
-    response.askWithCard(speechOutput, repromptOutput, cardTitle, cardContent);
-}
 
-    // getJsonEventsFromMTA('yellow', function (results) {
-    //     var speechText = "", i
-    //     if (!results) {
-    //         speechText = "There is a problem connecting to the MTA at this time. Please try again later.";
-    //         cardContent = speechText;
-    //         response.tell(speechText);
-    //     } else {
-    //         switch (lineColorSlot) {
-    //             case 'yellow':
-    //               sessionAttributes.text = results[8].status;
-    //               session.attributes = sessionAttributes;
-    //               cardContent = cardContent + results[8].status + " ";
-    //               speechText = "<p>" + speechText + results[8].status + "</p> ";
-    //               break;
-    //             case 'blue':
-    //               sessionAttributes.text = results[3].status;
-    //               session.attributes = sessionAttributes;
-    //               cardContent = cardContent + results[3].status + " ";
-    //               speechText = "<p>" + speechText + results[3].status + "</p> ";
 
-    //                 break;
-    //             case 'red':
-    //               sessionAttributes.text = results[0].status;
-    //               session.attributes = sessionAttributes;
-    //               cardContent = cardContent + results[0].status + " ";
-    //               speechText = "<p>" + speechText + results[0].status + "</p> ";
+    getJsonEventsFromMTA(lineColorSlot, function(results) {
+        var speechText = ""
+        if (!results) {
+          speechText = "There is a problem connecting to the MTA at this time. Please try again later.";
+          cardContent = speechText;
+          response.tell(speechText);
+        } else {
+            switch (lineColorSlot) {
+                case 'yellow':
+                  sessionAttributes.text = results[8].status;
+                  session.attributes = sessionAttributes;
+                  cardContent = cardContent + results[8].status + " ";
+                  speechText = "<p>" + speechText + results[8].status + "</p> ";
+                  break;
+                case 'blue':
+                  sessionAttributes.text = results[3].status;
+                  session.attributes = sessionAttributes;
+                  cardContent = cardContent + results[3].status + " ";
+                  speechText = "<p>" + speechText + results[3].status + "</p> ";
 
-    //                 break;
-    //             case 'green':
-    //               sessionAttributes.text = results[1].status;
-    //               session.attributes = sessionAttributes;
-    //               cardContent = cardContent + results[1].status + " ";
-    //               speechText = "<p>" + speechText + results[1].status + "</p> ";
+                    break;
+                case 'red':
+                  sessionAttributes.text = results[0].status;
+                  session.attributes = sessionAttributes;
+                  cardContent = cardContent + results[0].status + " ";
+                  speechText = "<p>" + speechText + results[0].status + "</p> ";
 
-    //                 break;
-    //             case 'lightgreen':
-    //               sessionAttributes.text = results[5].status;
-    //               session.attributes = sessionAttributes;
-    //               cardContent = cardContent + results[5].status + " ";
-    //               speechText = "<p>" + speechText + results[5].status + "</p> ";
+                    break;
+                case 'green':
+                  sessionAttributes.text = results[1].status;
+                  session.attributes = sessionAttributes;
+                  cardContent = cardContent + results[1].status + " ";
+                  speechText = "<p>" + speechText + results[1].status + "</p> ";
 
-    //                 break;
-    //             case 'grey':
-    //               sessionAttributes.text = results[7].status;
-    //               session.attributes = sessionAttributes;
-    //               cardContent = cardContent + results[7].status + " ";
-    //               speechText = "<p>" + speechText + results[7].status + "</p> ";
+                    break;
+                case 'lightgreen':
+                  sessionAttributes.text = results[5].status;
+                  session.attributes = sessionAttributes;
+                  cardContent = cardContent + results[5].status + " ";
+                  speechText = "<p>" + speechText + results[5].status + "</p> ";
 
-    //                 break;
-    //             case 'orange':
-    //               sessionAttributes.text = results[4].status;
-    //               session.attributes = sessionAttributes;
-    //               cardContent = cardContent + results[4].status + " ";
-    //               speechText = "<p>" + speechText + results[4].status + "</p> ";
+                    break;
+                case 'grey':
+                  sessionAttributes.text = results[7].status;
+                  session.attributes = sessionAttributes;
+                  cardContent = cardContent + results[7].status + " ";
+                  speechText = "<p>" + speechText + results[7].status + "</p> ";
 
-    //                 break;
-    //             case 'purple':
-    //               sessionAttributes.text = results[2].status;
-    //               session.attributes = sessionAttributes;
-    //               cardContent = cardContent + results[2].status + " ";
-    //               speechText = "<p>" + speechText + results[2].status + "</p> ";
+                    break;
+                case 'orange':
+                  sessionAttributes.text = results[4].status;
+                  session.attributes = sessionAttributes;
+                  cardContent = cardContent + results[4].status + " ";
+                  speechText = "<p>" + speechText + results[4].status + "</p> ";
 
-    //                 break;
-    //             case 'brown':
-    //               sessionAttributes.text = results[6].status;
-    //               session.attributes = sessionAttributes;
-    //               cardContent = cardContent + results[6].status + " ";
-    //               speechText = "<p>" + speechText + results[6].status + "</p> ";
-    //                 break;
-    //               default:
-    //                 console.log('stuff')
-    //         }
-    //         speechText = speechText + "<p>Wanna go deeper in history?</p>";
-    //         var speechOutput = {
-    //             speech: "<speak>" + prefixContent + speechText + "</speak>",
-    //             type: AlexaSkill.speechOutputType.SSML
-    //         };
-    //         var repromptOutput = {
-    //             speech: repromptText,
-    //             type: AlexaSkill.speechOutputType.PLAIN_TEXT
-    //         };
-    //         response.askWithCard(speechOutput, repromptOutput, cardTitle, cardContent);
+                    break;
+                case 'purple':
+                  sessionAttributes.text = results[2].status;
+                  session.attributes = sessionAttributes;
+                  cardContent = cardContent + results[2].status + " ";
+                  speechText = "<p>" + speechText + results[2].status + "</p> ";
 
-    //     }
-    // });
-// }
+                    break;
+                case 'brown':
+                  sessionAttributes.text = results[6].status;
+                  session.attributes = sessionAttributes;
+                  cardContent = cardContent + results[6].status + " ";
+                  speechText = "<p>" + speechText + results[6].status + "</p> ";
+                    break;
+                  default:
+                    console.log('stuff')
+             }
+           }
+            speechText = speechText + "<p>Would you like to check another train?</p>";
+            var speechOutput = {
+                speech: "<speak>" + prefixContent + speechText + "</speak>",
+                type: AlexaSkill.speechOutputType.SSML
+            };
+            var repromptOutput = {
+                speech: repromptText,
+                type: AlexaSkill.speechOutputType.PLAIN_TEXT
+            };
+        response.askWithCard(speechOutput, repromptOutput, cardTitle, cardContent);
+      })
+  }
+
 
 /**
  * Gets a poster prepares the speech to reply to the user.
@@ -495,14 +480,15 @@ function handleNextEventRequest(intent, session, response) {
         result = sessionAttributes.text,
         speechText = "",
         cardContent = "",
-        repromptText = "Do you want to know more about what happened on this date?",
+        repromptText = "Would you like to check another train?",
         i;
     if (!result) {
-        speechText = "With Train Traffic, you can get historical events for any day of the year. For example, you could say today, or August thirtieth. Now, which day do you want?";
+        speechText = "With Train Traffic, you can check the status of your trainline.  " +
+            "For example, you could say how is service on the yellow line?. Now, which trainline color do you want?";
         cardContent = speechText;
     } else if (sessionAttributes.index >= result.length) {
-        speechText = "There are no more events for this date. Try another date by saying <break time = \"0.3s\"/> get events for august thirtieth.";
-        cardContent = "There are no more events for this date. Try another date by saying, get events for august thirtieth.";
+        speechText = "All the trains crashed";
+        cardContent = "All the trains crashed";
     } else {
         for (i = 0; i < paginationSize; i++) {
             if (sessionAttributes.index>= result.length) {
@@ -513,8 +499,8 @@ function handleNextEventRequest(intent, session, response) {
             sessionAttributes.index++;
         }
         if (sessionAttributes.index < result.length) {
-            speechText = speechText + " Wanna go deeper in history?";
-            cardContent = cardContent + " Wanna go deeper in history?";
+            speechText = speechText + " Would you like to check another train?";
+            cardContent = cardContent + " Would you like to check another train?";
         }
     }
     var speechOutput = {
@@ -528,9 +514,8 @@ function handleNextEventRequest(intent, session, response) {
     response.askWithCard(speechOutput, repromptOutput, cardTitle, cardContent);
 }
 
-function getJsonEventsFromMTA(line) {
-    var url = /*urlPrefix;*/'https://damp-garden-70395.herokuapp.com/'
-    var request = new XMLHttpRequest();
+function getJsonEventsFromMTA(line, eventCallback) {
+    var url = urlPrefix;
     https.get(url, function(res) {
         var body = '';
 
@@ -539,13 +524,14 @@ function getJsonEventsFromMTA(line) {
         });
 
         res.on('end', function () {
-            var stringResult = parseJson(body);
-            eventCallback(stringResult);
+            var stringResult = JSON.parse(body);
+            eventCallback(stringResult)
         });
     }).on('error', function (e) {
         console.log("Got error: ", e);
     });
 }
+
 
 
 // Create the handler that responds to the Alexa Request.
