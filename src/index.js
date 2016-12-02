@@ -213,13 +213,6 @@ Response.prototype = (function () {
  * - Dialog and Session state: Handles two models, both a one-shot ask and tell model, and a multi-turn dialog model.
  * - SSML: Using SSML tags to control how Alexa renders the text-to-speech.
  *
- * Examples:
- * One-shot model:
- * User:  "Alexa, ask History Buff what happened on August thirtieth."
- * Alexa: "For August thirtieth, in 2003, [...] . Wanna go deeper in history?"
- * User: "No."
- * Alexa: "Good bye!"
- *
  *
  * Dialog model:
  * User:  "Alexa, open train traffic"
@@ -242,9 +235,8 @@ var https = require('https');
  * The AlexaSkill Module that has the AlexaSkill prototype and helper functions
  */
 
-
 /**
- * URL prefix to download history content from Wikipedia
+ * URL prefix to download the MTA train status
  */
 var urlPrefix = 'https://damp-garden-70395.herokuapp.com/';
 
